@@ -4,6 +4,7 @@ local micro = import("micro")
 local config = import("micro/config")
 local shell = import("micro/shell")
 local buffer = import("micro/buffer")
+local util = import("micro/util")
 
 local r_terminal_view = nil
 
@@ -63,12 +64,80 @@ function stopR(bp)
 end
 
 function sendLine(bp)
-    local line = bp.Buf:Line(bp.Cursor.Y)
-    if not line or line:match("^%s*$") then return end
+    local buf = bp.Buf
+    local cursor = bp.Cursor
     
-    -- Send to tmux session
-    shell.RunCommand("tmux send-keys -t micro_rrepl '" .. line .. "' Enter")
-    
-    micro.InfoBar():Message("Sent: " .. line)
-    bp.Cursor:Down()
+    -- Check if there's a selection
+    if cursor:HasSelection() then
+        -- Get selection boundaries
+        local start_loc = cursor.CurSelection[1]
+        local end_loc = cursor.CurSelection[2]
+        
+        -- Ensure start comes before end
+        local start_y, start_x = start_loc.Y, start_loc.X
+        local end_y, end_x = end_loc.Y, end_loc.X
+        
+        if start_y > end_y or (start_y == end_y and start_x > end_x) then
+            start_y, start_x, end_y, end_x = end_y, end_x, start_y, start_x
+        end
+        
+        local lines = {}
+        local line_count = 0
+        
+        -- Extract selected text line by line
+        for line_num = start_y, end_y do
+            local line_text = buf:Line(line_num)
+            if line_text then
+                local start_col = 0
+                local end_col = util.CharacterCountInString(line_text)
+                
+                -- Handle partial line selection
+                if line_num == start_y then
+                    start_col = start_x
+                end
+                if line_num == end_y then
+                    end_col = end_x
+                end
+                
+                -- Extract the relevant portion of the line
+                if start_col < end_col then
+                    local line_portion = util.String(line_text):sub(start_col + 1, end_col)
+                    -- Only add non-empty lines
+                    if not line_portion:match("^%s*$") then
+                        table.insert(lines, line_portion)
+                        line_count = line_count + 1
+                    end
+                end
+            end
+        end
+        
+        if line_count == 0 then
+            micro.InfoBar():Message("No valid lines selected")
+            return
+        end
+        
+        -- Send all selected lines
+        for _, line in ipairs(lines) do
+            shell.RunCommand("tmux send-keys -t micro_rrepl '" .. line .. "' Enter")
+        end
+        
+        micro.InfoBar():Message("Sent " .. line_count .. " selected line(s)")
+        
+        -- Clear selection
+        cursor:ResetSelection()
+        
+    else
+        -- No selection, send current line (original behavior)
+        local line = buf:Line(cursor.Y)
+        if not line or line:match("^%s*$") then 
+            micro.InfoBar():Message("Empty line, nothing to send")
+            return 
+        end
+        
+        -- Send to tmux session
+        shell.RunCommand("tmux send-keys -t micro_rrepl '" .. line .. "' Enter")
+        
+        micro.InfoBar():Message("Sent: " .. line)
+        cursor:Down()
+    end
 end
