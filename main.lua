@@ -38,7 +38,7 @@ function startR(bp)
     r_terminal_view:ResizePane(60)
     
     -- Now run the terminal command to attach to tmux
-    r_terminal_view:HandleCommand("term tmux attach -t micro_rrepl")
+    r_terminal_view:HandleCommand("term tmux attach -t micro_rrepl; set-option destroy-unattached on")
     
     -- Switch back to original pane
     bp:NextSplit()
