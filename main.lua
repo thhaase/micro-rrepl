@@ -63,6 +63,21 @@ function stopR(bp)
     micro.InfoBar():Message("R session stopped")
 end
 
+function findNextExecutableLine(buf, start_line)
+    local total_lines = buf:LinesNum()
+    
+    -- Search from the line after current position
+    for line_num = start_line + 1, total_lines - 1 do
+        local line = buf:Line(line_num)
+        if line and not line:match("^%s*$") and not line:match("^%s*#") then
+            -- Found a non-empty, non-comment line
+            return line_num
+        end
+    end
+    
+    return nil -- No executable line found
+end
+
 function sendLine(bp)
     local buf = bp.Buf
     local cursor = bp.Cursor
@@ -128,16 +143,25 @@ function sendLine(bp)
         
     else
         -- No selection, send current line (original behavior)
-        local line = buf:Line(cursor.Y)
-        if not line or line:match("^%s*$") then 
-            micro.InfoBar():Message("Empty line, nothing to send")
-            return 
+        local current_line = buf:Line(cursor.Y)
+        
+        -- If current line is empty or whitespace-only, find next executable line
+        if not current_line or current_line:match("^%s*$") then
+            local next_line_num = findNextExecutableLine(buf, cursor.Y)
+            if next_line_num then
+                cursor:GotoLoc(buffer.Loc(0, next_line_num))
+                current_line = buf:Line(next_line_num)
+                micro.InfoBar():Message("Jumped to next executable line")
+            else
+                micro.InfoBar():Message("No executable lines found below")
+                return
+            end
         end
         
         -- Send to tmux session
-        shell.RunCommand("tmux send-keys -t micro_rrepl '" .. line .. "' Enter")
+        shell.RunCommand("tmux send-keys -t micro_rrepl '" .. current_line .. "' Enter")
         
-        micro.InfoBar():Message("Sent: " .. line)
+        micro.InfoBar():Message("Sent: " .. current_line)
         cursor:Down()
     end
 end
