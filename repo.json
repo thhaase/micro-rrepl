@@ -1,0 +1,14 @@
+[{
+  "Name": "rrepl",
+  "Description": "Interactive R Shell based on tmux",
+  "Website": "https://github.com/thhaase/rrepl",
+  "Tags": ["R", "R Programming", "REPL"],
+  "Versions": [
+    {
+      "Version": "1.0.0",
+      "Require": {
+        "micro": ">=2.0.0"
+      }
+    }
+  ]
+}]
