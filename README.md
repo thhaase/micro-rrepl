@@ -4,7 +4,7 @@ This plugin turns micro into an extremely simple and lightweight R ID. It integr
 
 ## Usage
 
-- `:rrepl` starts persistent R session
+- `> rrepl` as a micro-command starts the R session
 
 
 
@@ -14,8 +14,8 @@ This plugin turns micro into an extremely simple and lightweight R ID. It integr
 
 
 
+- `> rrepl-stop` kills R and cleans up
 - Closing the terminal with `ctrl + q` stops the tmux process automatically
-- `:rrepl-stop` kills R and cleans up
 
 
 ## Installation
