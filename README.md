@@ -1,4 +1,4 @@
-# rrepl
+# micro-rrepl
 This plugin turns micro into an extremely simple and lightweight R ID. It integrates an interactive terminal with tmux for the REPL workflow most R users are used to.
 
 
