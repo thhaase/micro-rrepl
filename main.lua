@@ -12,6 +12,28 @@ function init()
     config.MakeCommand("rrepl", startR, config.NoComplete)
     config.MakeCommand("rrepl-stop", stopR, config.NoComplete)
     config.TryBindKey("Ctrl-r", "lua:rrepl.sendLine", false)
+    config.MakeCommand("InsertPipe", InsertPipe, config.NoComplete)
+    config.TryBindKey("Ctrl-P", "command:InsertPipe", true)
+end
+
+function InsertPipe(bp)
+    local pipe = " |> "
+    local buf = bp.Buf
+    local cursor = bp.Cursor
+    
+    -- Create a new Loc from cursor position
+    local loc = buffer.Loc(cursor.X, cursor.Y)
+    
+    -- Insert the pipe operator at cursor position
+    buf:Insert(loc, pipe)
+    
+    -- Move cursor to end of inserted text
+    --cursor:Right()
+    --cursor:Right()
+    --cursor:Right()
+    --cursor:Right()
+    
+    --micro.InfoBar():Message("Inserted pipe operator")
 end
 
 function startR(bp)
