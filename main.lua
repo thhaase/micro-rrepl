@@ -48,31 +48,45 @@ function startR(bp)
         micro.InfoBar():Message("R session already active")
         return
     end
-    
+
+    -- Get the directory of the current file
+    local file_path = bp.Buf.Path
+    local work_dir = ""
+    if file_path and file_path ~= "" then
+        work_dir = file_path:match("(.*[/\])")
+    end
+
+    local tmux_cmd = "tmux new-session -d -s micro_rrepl"
+    if work_dir and work_dir ~= "" then
+        -- To handle spaces in path, wrap it in quotes
+        tmux_cmd = tmux_cmd .. " -c '" .. work_dir .. "'"
+    end
+    tmux_cmd = tmux_cmd .. " 'R --interactive'"
+
     -- Start tmux session first
-    shell.RunCommand("tmux new-session -d -s micro_rrepl 'R --interactive'")
-    
+    shell.RunCommand(tmux_cmd)
+
     -- Create vertical split like filemanager does
     bp:HSplitIndex(buffer.NewBuffer("", "R Terminal"), true)
-    
+
     -- Save reference to the new terminal view
     r_terminal_view = micro.CurPane()
-    
+
     -- Set up the terminal view properties
     r_terminal_view.Buf.Type.Scratch = true
     r_terminal_view.Buf.Type.Readonly = true
     r_terminal_view.Buf:SetOptionNative("statusformatl", "R REPL")
     r_terminal_view.Buf:SetOptionNative("statusformatr", "")
-    
+
     -- Resize to reasonable width
     r_terminal_view:ResizePane(60)
-    
+
     -- Now run the terminal command to attach to tmux
     r_terminal_view:HandleCommand("term tmux attach -t micro_rrepl; set-option destroy-unattached on")
-    
+
     -- Switch back to original pane
     bp:NextSplit()
-    
+
     micro.InfoBar():Message("R REPL started in right pane")
 end
 
