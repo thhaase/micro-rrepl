@@ -3,19 +3,19 @@ This plugin turns micro into an extremely simple and lightweight R ID. It integr
 
 
 ## Usage
+### Start
+Execute `> rrepl` as a micro-command to start the R session
+`ctrl + q` closes the r-session (and stops the tmux process in the background automatically)
 
-- `> rrepl` as a micro-command starts the R session
-
-
-
+### Interact
 - `Ctrl + R` sends the current line of the cursor or the selected lines to the R session
 
 - `Ctrl + P` inserts a baseR pipe 
 
+- `Alt + #` inserts the R assign arrow " <- "
 
-
+### More
 - `> rrepl-stop` kills R and cleans up
-- Closing the terminal with `ctrl + q` stops the tmux process automatically
 
 
 ## Installation
