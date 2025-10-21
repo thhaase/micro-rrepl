@@ -12,7 +12,7 @@ Execute `> rrepl` as a micro-command to start the R session
 
 - `Ctrl + P` inserts a baseR pipe 
 
-- `Alt + #` inserts the R assign arrow " <- "
+- `Ctrl + #` inserts the R assign arrow " <- "
 
 ### More
 - `> rrepl-stop` kills R and cleans up

@@ -15,7 +15,7 @@ function init()
     config.MakeCommand("InsertPipe", InsertPipe, config.NoComplete)
     config.TryBindKey("Ctrl-P", "command:InsertPipe", true)
     config.MakeCommand("InsertArrow", InsertArrow, config.NoComplete)
-    config.TryBindKey("Alt-#", "command:InsertArrow", true)
+    config.TryBindKey("Ctrl-#", "command:InsertArrow", true)
 end
 
 function InsertPipe(bp)
