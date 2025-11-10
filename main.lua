@@ -53,7 +53,7 @@ function startR(bp)
     local file_path = bp.Buf.Path
     local work_dir = ""
     if file_path and file_path ~= "" then
-        work_dir = file_path:match("(.*[/\])")
+        work_dir = file_path:match("(.*[/\\])")
     end
 
     local tmux_cmd = "tmux new-session -d -s micro_rrepl"
