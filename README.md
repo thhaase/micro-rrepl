@@ -52,17 +52,17 @@ git clone -b v2.1.3 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugin
 
 After that copy the following code to create my `.tmux.conf` file.
 ```
-# Create .tmux.conf with all the configuration in one command
-cat > ~/.tmux.conf << 'EOF'
 # ---- CATPUCCIN SETUP ----
 set -g @catppuccin_flavor 'mocha'
-run ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux
+run-shell ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux
+
 # Make the status line more pleasant.
 set -g status-left ""
 set -g status-right '#[fg=#{@thm_crust},bg=#{@thm_teal}] session: #S '
+
 # Ensure that everything on the right side of the status line
 # is included.
 set -g status-right-length 100
 # ---- ----
-EOF
+
 ```
