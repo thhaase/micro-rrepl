@@ -61,10 +61,10 @@ function startR(bp)
         -- To handle spaces in path, wrap it in quotes
         tmux_cmd = tmux_cmd .. " -c '" .. work_dir .. "'"
     end
-    tmux_cmd = tmux_cmd .. " 'R --interactive'"
+    tmux_cmd = tmux_cmd .. " /usr/bin/R"
 
     -- Start tmux session first
-    shell.RunCommand(tmux_cmd)
+    shell.RunCommand(tmux_cmd .. " > /tmp/rrepl.log 2>&1")
 
     -- Create vertical split like filemanager does
     bp:HSplitIndex(buffer.NewBuffer("", "R Terminal"), true)
